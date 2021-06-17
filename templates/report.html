@@ -1,0 +1,25 @@
+<html>
+<body>
+	<div>Scoring with {{alg}}</div>
+
+	<br />Confusion matrix:<br />
+	<table>
+		{% for rowval in matrix %}
+		<tr>
+			{% for val in rowval %}
+			<td>{{val}}</td> {% endfor %}
+		</tr>
+		{% endfor %}
+	</table>
+
+	<br /> Report: 
+		<table>
+			{% for val in rep %}
+			<td>{{val}}</td> 
+			{% endfor %}
+	</table>
+	<br />
+	<br /> Accuracy: {{acc}}
+	
+</body>
+</html>

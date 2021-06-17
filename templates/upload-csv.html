@@ -1,0 +1,20 @@
+<html>
+{% block body %}
+<body>
+	<form action="/form_upload" method="POST"
+		enctype="multipart/form-data">
+		Upload csv People rows without header <br />
+		<input type="file" name="file" /> <input type="submit" />
+		<p>
+		<br /> Choose training algorithm : <br/>
+			<input type="radio" name="options" id="linearSVC" value="linearSVC">Linear SVC<br>
+			<input type="radio" name="options" id="randomForest" value="randomForest">Random Forest<br>
+			<input type="radio" name="options" id="logisticRegression" value="logisticRegression">Logistic Regression <br>
+		</p>
+	</form>	
+		  {% for line in result %}
+  			  {{ line }}
+  		 {% endfor %}
+</body>
+{% endblock %}
+</html>
