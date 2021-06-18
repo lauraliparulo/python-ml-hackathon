@@ -20,7 +20,7 @@ jobs:
     - name: Set up Python version
       uses: actions/setup-python@v1
       with:
-        python-version: '3.9'
+        python-version: '3.8'
 
     - name: Create and start virtual environment
       run: |
@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'python-ml-hackathon'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_dc4f262c9501407dba9d25ee7bb03d92 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_deee5777e33d40d896f9bb674ba0a0f4 }}
