@@ -15,13 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    
     - name: Clear artifacts
       uses: kolpav/purge-artifacts-action@v1
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
           expire-in: 1hr
+          
+    - uses: actions/checkout@v2
+    
+
 
     - name: Set up Python version
       uses: actions/setup-python@v1
