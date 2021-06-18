@@ -15,12 +15,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Clear artifacts
+      uses: kolpav/purge-artifacts-action@v1
+      with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          expire-in: 1hr
+       
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        age: '1 second'
+        # Optional inputs
+        # skip-tags: true
+        # skip-recent: 5   
+       
     - uses: actions/checkout@v2
+    
+
 
     - name: Set up Python version
       uses: actions/setup-python@v1
       with:
-        python-version: '3.9'
+        python-version: '3.8'
 
     - name: Create and start virtual environment
       run: |
@@ -31,7 +47,13 @@ jobs:
       run: pip install -r requirements.txt
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-
+    - name: Remove File
+      uses: JesseTG/rm@v1.0.2
+      with:
+        path: |
+          .
+          !venv
+    
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
       with:
@@ -59,4 +81,4 @@ jobs:
         with:
           app-name: 'python-ml-hackathon'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_dc4f262c9501407dba9d25ee7bb03d92 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_a0c6aa45da1b40cba57c000abfb5ed21 }}
