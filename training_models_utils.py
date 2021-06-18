@@ -10,7 +10,7 @@ import os
 def prepareData():
     if not os.path.exists('trained_models'):
         os.makedirs('trained_models')    
-    return data_set_test_preparation("people_csv")
+    return data_set_test_preparation("people-csv-light")
 
 def load_classifier_for_RandomForest() :
     print("\nLOADING random forest classifier...")
