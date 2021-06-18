@@ -52,7 +52,7 @@ jobs:
       with:
         path: |
           .
-          !venv/
+          !venv/*
     
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
