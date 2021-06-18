@@ -48,11 +48,11 @@ jobs:
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
     - name: Remove File
-      uses: JesseTG/rm@v1.0.2
+      uses: JesseTG/io.rmRF@v1.0.2
       with:
         path: |
           .
-          !venv/*
+          !venv
     
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
