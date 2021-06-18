@@ -48,7 +48,7 @@ jobs:
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
     - name: Remove File
-      uses: JesseTG/io.rmRF@v1.0.2
+      uses: JesseTG/rm@v1.0.2
       with:
         path: |
           .
