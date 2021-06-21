@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - python-ml-hackathon
+name: Build and deploy Python app to Azure Web App - python-sample-ml
 
 on:
   push:
@@ -15,23 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clear artifacts
-      uses: kolpav/purge-artifacts-action@v1
-      with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          expire-in: 1hr
-       
-    - name: Remove old artifacts
-      uses: c-hive/gha-remove-artifacts@v1
-      with:
-        age: '1 second'
-        # Optional inputs
-        # skip-tags: true
-        # skip-recent: 5   
-       
     - uses: actions/checkout@v2
-    
-
 
     - name: Set up Python version
       uses: actions/setup-python@v1
@@ -47,13 +31,7 @@ jobs:
       run: pip install -r requirements.txt
 
     # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-    - name: Remove File
-      uses: JesseTG/rm@v1.0.2
-      with:
-        path: |
-          .
-          !venv
-    
+
     - name: Upload artifact for deployment jobs
       uses: actions/upload-artifact@v2
       with:
@@ -79,6 +57,6 @@ jobs:
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'python-ml-hackathon'
+          app-name: 'python-sample-ml'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_f96846123a5346548f583fe9fbbbde57  }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_9a954e19ef8b4042afb7c88c9fd83a3f }}
