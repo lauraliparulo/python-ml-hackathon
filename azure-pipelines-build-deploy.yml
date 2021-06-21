@@ -23,7 +23,7 @@ variables:
   environmentName: 'python-sample-solution'
 
   # Project root folder. Point to the folder containing manage.py file.
-  #projectRoot: $(System.DefaultWorkingDirectory)
+  # projectRoot: $(System.DefaultWorkingDirectory)
 
   # Python version: 3.8
   pythonVersion: '3.8'
@@ -84,7 +84,7 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App : {{ webAppName }}'
             inputs:
-              azureSubscription: "eab05a97-645d-4af7-81b1-1e464289c729"
+              azureSubscription: $(azureSubscription)
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
               appType: webAppLinux
