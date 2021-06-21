@@ -52,6 +52,8 @@ def scoring():
 @app.route("/report")
 def report():
    return render_template('report.html')
+
+# https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
 ######################################################  
 # JSON RESPONSES
 

@@ -1,5 +1,6 @@
 import dask.dataframe as dd
 import pandas as pd 
+import json
 from timeit import default_timer as timer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
@@ -19,6 +20,26 @@ def data_set_test_preparation(data_set_dir_path):
     subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesYtest = data_splitting_and_vectorizing(dataFrame)
     return subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesYtest
 
+def json_string_to_data_set(json_string):
+
+    json_multiple ='['+json_string+','+json_string+','+json_string+']'
+    json_object = json.loads(json_multiple)
+
+    dataframe = pd.DataFrame(json_object, index=[0])
+    
+    print(json_object)
+    
+    print(dataframe.shape[0])
+    
+    print("CATEGORIES FOUND: ", dataframe['kategorie'].values)
+    dataframe.drop(dataframe.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
+    dataframe = dataframe[dataframe['kategorie'].notnull()]
+    dataframe = dataframe[dataframe['kategorie']!=""]
+    dataframe = dataframe[dataframe['betreffzeile'].notnull()]
+    dataframe = dataframe[dataframe['betreffzeile']!=""]
+    #if null
+    return dataframe 
+    
 def data_set_test_preparation_upload(data_set_dir_path):
     dataFrame = data_ingestion_upload(data_set_dir_path)
     dataFrame = data_cleansing(dataFrame)
@@ -90,6 +111,18 @@ def data_vectorizing(dataFrame):
     categoriesTest = encoder.fit_transform(dataFrame.kategorie)
     print("\nVECTORIZING completed")
     return subjectsTest, categoriesTest  
+
+
+def data_vectorizing_one_row(dataframe):
+    print("\nVECTORIZING subjects and categories...")
+    vectorizer = CountVectorizer(max_features=100, min_df=1, max_df=1, stop_words=stopwords.words('german'))
+    subjectsTest = vectorizer.fit_transform(dataframe.betreffzeile)
+
+    encoder = LabelEncoder()
+    categoriesTest = encoder.fit_transform(dataframe.kategorie)
+    print("\nVECTORIZING completed")
+    return subjectsTest, categoriesTest  
+
 
 def data_preparation_eval(dataframe):
     print('Eval prep')
