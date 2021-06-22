@@ -5,6 +5,8 @@ from timeit import default_timer as timer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 #report dependencies
 from sklearn.metrics import accuracy_score
@@ -14,6 +16,7 @@ from sklearn.metrics import confusion_matrix
 header_list = ["id", "versicherungsnummer", "vorname","nachname", "geburtsdatum", "ort",
                "strasse", "telefon", "iban","email", "emaildatum", "kategorie", "betreffzeile"]
 
+ 
 def data_set_test_preparation(data_set_dir_path):
     dataFrame = data_ingestion(data_set_dir_path)
     dataFrame = data_cleansing(dataFrame)
@@ -22,8 +25,7 @@ def data_set_test_preparation(data_set_dir_path):
 
 def json_string_to_data_set(json_string):
 
-    json_multiple ='['+json_string+','+json_string+','+json_string+']'
-    json_object = json.loads(json_multiple)
+    json_object = json.loads(json_string)
 
     dataframe = pd.DataFrame(json_object, index=[0])
     
