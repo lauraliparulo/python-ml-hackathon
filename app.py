@@ -51,9 +51,11 @@ def scoring():
 
 @app.route("/report")
 def report():
-   return render_template('report.html')
+   return render_template('report.html')
 
-# https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
+
+# https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
+
 ######################################################  
 # JSON RESPONSES
 
@@ -84,7 +86,7 @@ def upload_file_from_request():
       return make_response(jsonify(responseBody),200);
     
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
 
 # endpoint call to trigger training with algorithm
 
