@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import render_template, request, make_response, jsonify, json, redirect, url_for
-from flask_restful import reqparse
 from os import remove
 from data_utils import data_set_test_preparation_upload
 from training_models_utils import score_with_RandomForest
@@ -12,9 +11,6 @@ import os
 app = Flask(__name__)
 
 algorithms = ['linearSVC','randomForest','logisticRegression']
-
-#parser = reqparse.RequestParser()
-#parser.add_argument('algorithm', type=str)
 
 @app.route("/")
 @app.route("/index")
