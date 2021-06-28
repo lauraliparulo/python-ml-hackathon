@@ -1,4 +1,4 @@
-from data_utils import data_set_test_preparation
+from data_utils import data_set_from_dir
 from data_utils import report_classification
 from sklearn import model_selection
 from sklearn.svm import LinearSVC
@@ -10,7 +10,7 @@ import os
 def prepareData():
     if not os.path.exists('trained_models'):
         os.makedirs('trained_models')    
-    return data_set_test_preparation("people-csv-light")
+    return data_set_from_dir("people_csv")
 
 def load_classifier_for_RandomForest() :
     print("\nLOADING random forest classifier...")
@@ -53,6 +53,8 @@ def score_with_LinearSVC(subjectsTest, categoriesTest):
     print("\nSCORING with LinearSVC classifier...")    
     categoriesPredicted = classifier.predict(subjectsTest)
     matrix, report, accuracy = report_classification(categoriesTest, categoriesPredicted)
+    print("Categories predicted")
+    print(categoriesPredicted)
     return  categoriesPredicted, matrix, report, accuracy
 
 

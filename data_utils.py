@@ -1,10 +1,12 @@
 import dask.dataframe as dd
 import pandas as pd 
 import json
+from pandas import json_normalize
 from timeit import default_timer as timer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+import csv
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
@@ -16,32 +18,37 @@ from sklearn.metrics import confusion_matrix
 header_list = ["id", "versicherungsnummer", "vorname","nachname", "geburtsdatum", "ort",
                "strasse", "telefon", "iban","email", "emaildatum", "kategorie", "betreffzeile"]
 
- 
-def data_set_test_preparation(data_set_dir_path):
+def data_set_from_dir(data_set_dir_path):
     dataFrame = data_ingestion(data_set_dir_path)
-    dataFrame = data_cleansing(dataFrame)
-    subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesYtest = data_splitting_and_vectorizing(dataFrame)
+    return data_set_test_preparation_from_dataframe(dataFrame)
+
+def data_set_from_dir_test(data_set_dir_path):
+    dataFrame = data_ingestion(data_set_dir_path)
+    return data_set_test_preparation_from_dataframe_test(dataFrame)
+
+def data_set_test_preparation_from_dataframe(dataframe):
+    dataframe = data_cleansing(dataframe)
+    subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesYtest = data_splitting_and_vectorizing(dataframe)
     return subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesYtest
 
+def data_set_test_preparation_from_dataframe_test(dataframe):
+    dataframe = data_cleansing(dataframe)
+    return data_vectorizing(dataframe)
+
 def json_string_to_data_set(json_string):
-
     json_object = json.loads(json_string)
-
-    dataframe = pd.DataFrame(json_object, index=[0])
-    
-    print(json_object)
-    
-    print(dataframe.shape[0])
-    
-    print("CATEGORIES FOUND: ", dataframe['kategorie'].values)
-    dataframe.drop(dataframe.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
-    dataframe = dataframe[dataframe['kategorie'].notnull()]
-    dataframe = dataframe[dataframe['kategorie']!=""]
-    dataframe = dataframe[dataframe['betreffzeile'].notnull()]
-    dataframe = dataframe[dataframe['betreffzeile']!=""]
-    #if null
+    print(json_object) 
+    dataframe = json_normalize(json_object['datasets'])   
+    print(dataframe)
     return dataframe 
-    
+
+def json_string_to_data_set(json_string):
+    json_object = json.loads(json_string)
+    print(json_object) 
+    dataframe = json_normalize(json_object['datasets'])   
+    print(dataframe)
+    return dataframe 
+
 def data_set_test_preparation_upload(data_set_dir_path):
     dataFrame = data_ingestion_upload(data_set_dir_path)
     dataFrame = data_cleansing(dataFrame)
@@ -51,27 +58,20 @@ def data_set_test_preparation_upload(data_set_dir_path):
 
 def data_ingestion(data_set_dir_path):
     print("\nDATA INGESTION started...")
-    dataFrame = dd.read_csv(data_set_dir_path+"/Datensatz*.csv", error_bad_lines=False, delimiter=';',skiprows=1, names=header_list , dtype={'strasse':str})
-
-    dataFrame.drop(dataFrame.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
-
-    print(dataFrame.head())
-
+    dataFrame = dd.read_csv(data_set_dir_path+"/*.csv", error_bad_lines=False, delimiter=';',skiprows=1, names=header_list , dtype={'strasse':str})
     print("\nDATA INGESTION completed")
     return dataFrame
 
 def data_ingestion_upload(data_set_dir_path):
     print("\nDATA INGESTION started...")
     dataFrame = dd.read_csv(data_set_dir_path, error_bad_lines=False, delimiter=';',skiprows=1, names=header_list , dtype={'strasse':str})
-
-    dataFrame.drop(dataFrame.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
-
     print(dataFrame.head())
-
     print("\nDATA INGESTION completed")
     return dataFrame
 
 def data_cleansing(dataFrame):    
+    dataFrame.drop(dataFrame.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
+    print(dataFrame.head())
     print ("\nDATA CLEANSING started...")
     starttime = timer()
 
@@ -88,13 +88,17 @@ def data_cleansing(dataFrame):
 
 def data_splitting_and_vectorizing(dataFrame):
     print ("\nSPLITTING DATA started...")
-    dataFrameP = dataFrame.compute(); # convert to panda dataFrame
+    
+    if not isinstance(dataFrame, pd.DataFrame):
+        dataFrameP = dataFrame.compute();
+    else: dataFrameP = dataFrame
+    
     subject_train, subject_test, categories_train, categories_test = train_test_split(dataFrameP.betreffzeile, dataFrameP.kategorie, test_size=0.25, random_state=10)
     #trainingDataframe, testDataFrame = dataFrame.random_split([0.85, 0.15], random_state=123)
     print ("\nSPLITTING DATA completed")
 
     print("\nVECTORIZING subjects and categories...")
-    vectorizer = CountVectorizer(max_features=100, min_df=5, max_df=0.7, stop_words=stopwords.words('german'))
+    vectorizer = CountVectorizer(max_features=100, min_df=5, max_df=0.8, stop_words=stopwords.words('german'))
     subjectsXtrain = vectorizer.fit_transform(subject_train)
     subjectsXtest = vectorizer.fit_transform(subject_test)
 
@@ -106,25 +110,13 @@ def data_splitting_and_vectorizing(dataFrame):
 
 def data_vectorizing(dataFrame):
     print("\nVECTORIZING subjects and categories...")
-    vectorizer = CountVectorizer(max_features=100, min_df=5, max_df=0.7, stop_words=stopwords.words('german'))
+    vectorizer = CountVectorizer(max_features=100, min_df=5, max_df=0.8, stop_words=stopwords.words('german'))
     subjectsTest = vectorizer.fit_transform(dataFrame.betreffzeile)
 
     encoder = LabelEncoder()
     categoriesTest = encoder.fit_transform(dataFrame.kategorie)
     print("\nVECTORIZING completed")
     return subjectsTest, categoriesTest  
-
-
-def data_vectorizing_one_row(dataframe):
-    print("\nVECTORIZING subjects and categories...")
-    vectorizer = CountVectorizer(max_features=100, min_df=1, max_df=1, stop_words=stopwords.words('german'))
-    subjectsTest = vectorizer.fit_transform(dataframe.betreffzeile)
-
-    encoder = LabelEncoder()
-    categoriesTest = encoder.fit_transform(dataframe.kategorie)
-    print("\nVECTORIZING completed")
-    return subjectsTest, categoriesTest  
-
 
 def data_preparation_eval(dataframe):
     print('Eval prep')
@@ -145,3 +137,18 @@ def report_classification(categoriesTest, categoriesPred):
 
     print("---------------------------")
     return conf_matrix, report, accuracy
+    
+def csv_to_json(csvFilePath):
+    jsonArray = []
+    #read csv file
+    with open(csvFilePath, encoding='utf-8') as csvf: 
+        #load csv file data using csv library's dictionary reader
+        csvReader = csv.DictReader(csvf) 
+        #convert each csv row into python dict
+        for row in csvReader: 
+            #add this python dict to json array
+            jsonArray.append(row)
+            
+        jsonString = json.dumps(jsonArray, indent=4)
+    return jsonString
+    

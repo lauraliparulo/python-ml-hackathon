@@ -4,7 +4,7 @@
 	<form action="/form_upload" method="POST"
 		enctype="multipart/form-data">
 		Upload csv People rows without header <br />
-		<input type="file" name="file" /> <input type="submit" />
+		<input type="file" name="file" /> 
 		<p>
 		<br /> Choose training algorithm : <br/>
 			<input type="radio" name="options" id="linearSVC" value="linearSVC">Linear SVC<br>
@@ -15,6 +15,7 @@
 		  {% for line in result %}
   			  {{ line }}
   		 {% endfor %}
+  	<input type="submit" />
 </body>
 {% endblock %}
 </html>

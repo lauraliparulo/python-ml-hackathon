@@ -1,6 +1,6 @@
-from data_utils import data_set_test_preparation
+from data_utils import data_set_from_dir_test
 from training_models_utils import score_with_RandomForest
 
-subjectsTrain, subjectsTest, categoriesTrain, categoriesTest = data_set_test_preparation("people-csv-light")
+subjectsTest, categoriesTest = data_set_from_dir_test("people-csv-light")
 
-score_with_RandomForest(subjectsTest, categoriesTest)
+categoriesPredicted, matrix, report, accuracy = score_with_RandomForest(subjectsTest, categoriesTest)
