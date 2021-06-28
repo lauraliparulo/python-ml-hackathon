@@ -11,11 +11,12 @@
 			<input type="radio" name="options" id="randomForest" value="randomForest">Random Forest<br>
 			<input type="radio" name="options" id="logisticRegression" value="logisticRegression">Logistic Regression <br>
 		</p>
+		<input type="submit" />
 	</form>	
 		  {% for line in result %}
   			  {{ line }}
   		 {% endfor %}
-  	<input type="submit" />
+
 </body>
 {% endblock %}
 </html>

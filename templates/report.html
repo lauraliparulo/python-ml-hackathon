@@ -13,11 +13,7 @@
 	</table>
 
 	<br /> Report: 
-		<table>
-			{% for val in rep %}
-			<td>{{val}}</td> 
-			{% endfor %}
-	</table>
+	     {{report | safe}}
 	<br />
 	<br /> Accuracy: {{acc}}
 	

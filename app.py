@@ -1,28 +1,17 @@
 from flask import Flask
 from flask import render_template, request, make_response, jsonify, json, redirect, url_for
 from os import remove
-from data_utils import data_set_test_preparation_upload
-from data_utils import json_string_to_data_set
-from training_models_utils import score_with_RandomForest
-from training_models_utils import score_with_LogisticRegression
-from training_models_utils import score_with_LinearSVC
-from data_utils import json_string_to_data_set
-from data_utils import data_set_test_preparation_from_dataframe_test
-from data_utils import data_ingestion
 from pandas import json_normalize
-import pandas as pd
-import numpy as np
-import dask as dd
 from werkzeug.utils import secure_filename
 from data_utils import csv_to_json
 import os
-from json import JSONEncoder
 from sklearn.metrics import accuracy_score
+from app_utils import *
+from data_utils import *
 from sklearn.metrics import classification_report
 
-app = Flask(__name__)
 
-algorithms = ['linearSVC','randomForest','logisticRegression']
+app = Flask(__name__)
 
 @app.route("/")
 @app.route("/index")
@@ -48,18 +37,17 @@ def scoring():
     print(algorithm)
     subjectsTest, categoriesTest = data_set_test_preparation_upload(fileName)
     
-    if algorithm == algorithms[0]:
-        categoriesPredicted, matrix, report, accuracy = score_with_LinearSVC(subjectsTest, categoriesTest)    
-    elif  algorithm == algorithms[1]:
-        categoriesPredicted, matrix, report, accuracy = score_with_RandomForest(subjectsTest, categoriesTest)  
-    elif algorithm == algorithms[2]:
-        categoriesPredicted, matrix, report, accuracy = score_with_LogisticRegression(subjectsTest, categoriesTest)  
+    categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
+      
     os.remove(fileName)
-    return render_template('report.html', cat=categoriesPredicted, matrix=matrix, rep = report, acc=accuracy, alg = algorithm)
+    report_df = classification_report_to_dataframe(report)
+    return render_template('report.html', cat=categoriesPredicted, matrix=matrix, report = report_df.to_html(), acc=accuracy, alg = algorithm)
 
 @app.route("/report")
 def report():
-   return render_template('report.html')
+    report_df = classification_report_to_dataframe(report)
+
+    return render_template('report.html', report = report_df.to_html())
 
 
 # https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
@@ -73,28 +61,25 @@ def upload_file_from_request():
       f = request.files['file']
       fileName = secure_filename(f.filename)
       f.save(fileName)   
-      print(fileName)
+
       json_data = request.form.get('data')
       print(json_data)
+      
       d = json.loads(json_data)
+      
       algorithm = d["algorithm"]
       subjectsTest, categoriesTest = data_set_test_preparation_upload(fileName)    
-      if algorithm == algorithms[0]:
-        categoriesPredicted, matrix, report, accuracy = score_with_LinearSVC(subjectsTest, categoriesTest)    
-      elif  algorithm == algorithms[1]:
-        categoriesPredicted, matrix, report, accuracy = score_with_RandomForest(subjectsTest, categoriesTest)  
-      elif algorithm == algorithms[2]:
-         categoriesPredicted, matrix, report, accuracy = score_with_LogisticRegression(subjectsTest, categoriesTest)  
+      
+      categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
+         
+      report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
+      
+      response_body = create_response_body_from_report(report);
+      
       os.remove(fileName)      
       
-      response = app.response_class( 
-        response="Accuracy: "+str(accuracy)+"\n",
-        status=200,
-        mimetype='application/json')
       
-      responseBody = { "Algorithm": algorithm, "Accuracy": str(accuracy)}
-      
-      return make_response(jsonify(responseBody),200);
+      return make_response(jsonify(response_body),200);
 
 #upload from file by curl
 @app.route('/upload_json', methods = ['POST','PUT'])
@@ -122,72 +107,15 @@ def upload_dataset_json():
       labels = list(categories_labels)
       labels.append('None')
     
-      if algorithm == algorithms[0]:
-        categoriesPredicted, matrix, report, accuracy = score_with_LinearSVC(subjectsTest, categoriesTest)    
-      elif  algorithm == algorithms[1]:
-        categoriesPredicted, matrix, report, accuracy = score_with_RandomForest(subjectsTest, categoriesTest)  
-      else :
-         categoriesPredicted, matrix, report, accuracy = score_with_LogisticRegression(subjectsTest, categoriesTest)  
-     
+      categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
+         
       report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
+      
+      response_body = create_response_body_from_report(report);
        
-      report_df = classification_report_to_dataframe(report)
-      gruppen_id = "Capgemini Springboot Team"
-      id ="dummy-id-4711"   
-      
-      print("report:")
-      print(report)
-      
-      kategories = []
-      precisions = []
-      recall = []
-      f1_score = []
-      support = []
-      
-      i=0
-      
-      for row in report_df.iterrows(): 
-            precisions.append(row[1]['precision'])   
-            recall.append(row[1]['recall'])
-            f1_score.append(row[1]['f1-score'])  
-            support.append(row[1]['support'])    
+      return make_response(response_body,200);  
 
-      for label in labels: 
-          kategories.append({'Kategorie': label, 'Precision': precisions[i], 'Recall':recall[i], 'F1-score':f1_score[i], 'Support':support[i]})  
-          i+=1
-   
-        
-      responseBody = JSONEncoder().encode({
-          "Responses" : [
-              { "gruppen_id" : gruppen_id,  
-                "id" : id,
-                "algorithm": algorithm,
-                "accuracy" : str(accuracy),
-                "kategorien" : kategories
-               }
-              ]})
-                 
-      return make_response(responseBody,200);  
 
-def classification_report_to_dataframe(str_representation_of_report):
-    split_string = [x.split(' ') for x in str_representation_of_report.split('\n')]
-    column_names = ['']+[x for x in split_string[0] if x!='']
-    values = []
-    for table_row in split_string[1:-1]:
-        table_row = [value for value in table_row if value!='']
-        if table_row!=[]:
-            values.append(table_row)
-    for i in values:
-        for j in range(len(i)):
-            if i[1] == 'avg':
-                i[0:2] = [' '.join(i[0:2])]
-            if len(i) == 3:
-                i.insert(1,np.nan)
-                i.insert(2, np.nan)
-            else:
-                pass
-    report_to_df = pd.DataFrame(data=values, columns=column_names)
-    return report_to_df
-
+  
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)
