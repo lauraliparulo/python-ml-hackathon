@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, request, make_response, jsonify, json, redirect, url_for
+from flask import render_template, request, make_response, jsonify, json, redirect, url_for, Blueprint
 from os import remove
 from pandas import json_normalize
 from werkzeug.utils import secure_filename
@@ -10,8 +10,9 @@ from app_utils import *
 from data_utils import *
 from sklearn.metrics import classification_report
 
-
 app = Flask(__name__)
+errors = Blueprint('errors', __name__)
+
 
 @app.route("/")
 @app.route("/index")
@@ -56,7 +57,7 @@ def report():
 # JSON RESPONSES
 
 #upload from file by curl
-@app.route('/upload', methods = ['POST','PUT'])
+@app.route('/upload', methods = ['POST'])
 def upload_file_from_request():
       f = request.files['file']
       fileName = secure_filename(f.filename)
@@ -74,7 +75,7 @@ def upload_file_from_request():
          
       report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
       
-      response_body = create_response_body_from_report(report);
+      response_body = create_response_body_from_report(report, labels);
       
       os.remove(fileName)      
       
@@ -82,7 +83,7 @@ def upload_file_from_request():
       return make_response(jsonify(response_body),200);
 
 #upload from file by curl
-@app.route('/upload_json', methods = ['POST','PUT'])
+@app.route('/upload_json', methods = ['POST'])
 def upload_dataset_json():
     
       json_data = request.get_json()
@@ -92,12 +93,12 @@ def upload_dataset_json():
       except KeyError:
           print("algorithm not found in JSON. Using logistic regression")
           algorithm = algorithms[2]
-      # dataframe = json_normalize(json_data['datasets'])     
-      # print(dataframe)     
+      dataframe = json_normalize(json_data['datasets'])     
+      print(dataframe)     
       
       ##  --- TODO remove after ------------------------------------------------------------
       # restore for calls
-      dataframe = data_ingestion("people-csv-light")
+      #  dataframe = data_ingestion("people-csv-light")
       # ------------------------------------------------------------------------------------
       
       subjectsTest, categoriesTest = data_set_test_preparation_from_dataframe_test(dataframe)
@@ -111,11 +112,27 @@ def upload_dataset_json():
          
       report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
       
-      response_body = create_response_body_from_report(report);
+      response_body = create_response_body_from_report(report, labels);
        
       return make_response(response_body,200);  
 
+@errors.app_errorhandler(Exception)
+def handle_error(error):
+    message = [str(x) for x in error.args]
+    status_code = 500
+    print("\nERROR:",message)
+    success = False
+    response = {
+        'success': success,
+        'error': {
+            'type': error.__class__.__name__,
+            'message': message
+        }
+    }
 
-  
+    return jsonify(response), status_code
+
+app.register_blueprint(errors)
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, debug=True)

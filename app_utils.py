@@ -39,7 +39,7 @@ def score_with_given_algorithm(subjectsTest, categoriesTest, algorithm):
         categoriesPredicted, matrix, report, accuracy = score_with_LogisticRegression(subjectsTest, categoriesTest)  
     return categoriesPredicted, matrix, report, accuracy
            
-def create_response_body_from_report(report):
+def create_response_body_from_report(report, labels):
       report_df = classification_report_to_dataframe(report)
       gruppen_id = "Capgemini Springboot Team"
       id ="dummy-id-4711"   
