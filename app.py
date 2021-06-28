@@ -3,11 +3,10 @@ from flask import render_template, request, make_response, jsonify, json, redire
 from os import remove
 from pandas import json_normalize
 from werkzeug.utils import secure_filename
-from data_utils import csv_to_json
 import os
 from sklearn.metrics import accuracy_score
-from app_utils import *
-from data_utils import *
+from utils.app_utils import *
+from utils.data_utils import *
 from sklearn.metrics import classification_report
 
 app = Flask(__name__)
@@ -36,11 +35,13 @@ def scoring():
     algorithm = request.args['algorithm'] 
     fileName = request.args['fileName'] 
     print(algorithm)
-    subjectsTest, categoriesTest = data_set_test_preparation_upload(fileName)
-    
+
+    subjectsTest, categoriesTest, labels = data_set_test_preparation_upload(fileName)      
     categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
+    report = classification_report(categoriesTest, categoriesPredicted)
       
     os.remove(fileName)
+
     report_df = classification_report_to_dataframe(report)
     return render_template('report.html', cat=categoriesPredicted, matrix=matrix, report = report_df.to_html(), acc=accuracy, alg = algorithm)
 
@@ -69,13 +70,12 @@ def upload_file_from_request():
       d = json.loads(json_data)
       
       algorithm = d["algorithm"]
-      subjectsTest, categoriesTest = data_set_test_preparation_upload(fileName)    
+      subjectsTest, categoriesTest, labels = data_set_test_preparation_upload(fileName)    
       
       categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
          
-      report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
-      
-      response_body = create_response_body_from_report(report, labels);
+      report = classification_report(categoriesTest, categoriesPredicted)
+      response_body = create_response_body_from_report(report, labels, algorithm, accuracy);
       
       os.remove(fileName)      
       
@@ -93,18 +93,17 @@ def upload_dataset_json():
       except KeyError:
           print("algorithm not found in JSON. Using logistic regression")
           algorithm = algorithms[2]
-      dataframe = json_normalize(json_data['datasets'])     
-      print(dataframe)     
+    #  dataframe = json_normalize(json_data['datasets'])     
       
+
       ##  --- TODO remove after ------------------------------------------------------------
       # restore for calls
-      #  dataframe = data_ingestion("people-csv-light")
+      dataframe = data_ingestion("people-csv-light")
       # ------------------------------------------------------------------------------------
       
-      subjectsTest, categoriesTest = data_set_test_preparation_from_dataframe_test(dataframe)
+      subjectsTest, categoriesTest =  data_set_test_preparation_from_dataframe_test(dataframe)
   
       categories_labels = dataframe.kategorie.dropna().unique();
-
       labels = list(categories_labels)
       labels.append('None')
     
@@ -112,7 +111,7 @@ def upload_dataset_json():
          
       report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
       
-      response_body = create_response_body_from_report(report, labels);
+      response_body = create_response_body_from_report(report, labels, algorithm, accuracy);
        
       return make_response(response_body,200);  
 
@@ -132,7 +131,7 @@ def handle_error(error):
 
     return jsonify(response), status_code
 
-app.register_blueprint(errors)
+#app.register_blueprint(errors)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

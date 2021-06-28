@@ -53,8 +53,15 @@ def data_set_test_preparation_upload(data_set_dir_path):
     dataFrame = data_ingestion_upload(data_set_dir_path)
     dataFrame = data_cleansing(dataFrame)
     if not isinstance(dataFrame, pd.DataFrame):
-        return data_vectorizing(dataFrame.compute())
-    else: return data_vectorizing(dataFrame)
+         df = dataFrame.compute()
+         subjectsTest, categoriesTest = data_vectorizing(df)         
+    else: 
+         subjectsTest, categoriesTest =  data_vectorizing(dataFrame)         
+   
+    labels = list(dataFrame.kategorie.unique())
+    labels.append('None')
+      
+    return subjectsTest, categoriesTest, labels
 
 def data_ingestion(data_set_dir_path):
     print("\nDATA INGESTION started...")
@@ -116,14 +123,15 @@ def data_vectorizing(dataFrame):
     encoder = LabelEncoder()
     categoriesTest = encoder.fit_transform(dataFrame.kategorie)
     print("\nVECTORIZING completed")
-    return subjectsTest, categoriesTest  
+   
+    return subjectsTest, categoriesTest 
 
 def data_preparation_eval(dataframe):
     print('Eval prep')
     dataframe.drop(dataframe.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
     dataframe = data_cleansing(dataframe)
     print("HEAD: ",dataframe.head())
-    subjectsTest, categoriesTest = data_vectorizing(dataframe)
+    subjectsTest, categoriesTest, labels = data_vectorizing(dataframe)
     return subjectsTest, categoriesTest
 
 def report_classification(categoriesTest, categoriesPred):

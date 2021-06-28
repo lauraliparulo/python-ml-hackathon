@@ -1,5 +1,5 @@
-from data_utils import data_set_from_dir
-from data_utils import report_classification
+from utils.data_utils import data_set_from_dir
+from utils.data_utils import report_classification
 from sklearn import model_selection
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
