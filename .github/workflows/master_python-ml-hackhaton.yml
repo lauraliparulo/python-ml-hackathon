@@ -60,3 +60,4 @@ jobs:
           app-name: 'python-ml-hackhaton'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_f5b275bddeb84038a53db55439402d11 }}
+          run: 'python -m nltk.downloader stopwords'
