@@ -93,12 +93,12 @@ def upload_dataset_json():
       except KeyError:
           print("algorithm not found in JSON. Using logistic regression")
           algorithm = algorithms[2]
-    #  dataframe = json_normalize(json_data['datasets'])     
+      dataframe = json_normalize(json_data['datasets'])     
       
 
       ##  --- TODO remove after ------------------------------------------------------------
       # restore for calls
-      dataframe = data_ingestion("people-csv-light")
+      #dataframe = data_ingestion("people-csv-light")
       # ------------------------------------------------------------------------------------
       
       subjectsTest, categoriesTest =  data_set_test_preparation_from_dataframe_test(dataframe)
@@ -131,7 +131,7 @@ def handle_error(error):
 
     return jsonify(response), status_code
 
-#app.register_blueprint(errors)
+app.register_blueprint(errors)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
