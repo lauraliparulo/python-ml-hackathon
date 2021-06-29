@@ -22,6 +22,12 @@ jobs:
       with:
         python-version: '3.8'
 
+    - name: Clear artifacts
+      uses: kolpav/purge-artifacts-action@v1
+      with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          expire-in: 0hr
+          
     - name: Create and start virtual environment
       run: |
         python -m venv venv
