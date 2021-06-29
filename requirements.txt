@@ -1,4 +1,5 @@
 # flask, flask.ext, flask-restplus
+CherryPy==18.6.0
 dask>=2021.6.0
 Flask==1.1.4
 flask-restx==0.4.0

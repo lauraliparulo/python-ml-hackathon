@@ -62,7 +62,8 @@ def create_response_body_from_report(report, labels, algorithm, accuracy):
             support.append(row[1]['support'])    
 
       for label in labels: 
-          kategories.append({'Kategorie': label, 'Precision': precisions[i], 'Recall':recall[i], 'F1-score':f1_score[i], 'Support':support[i]})  
+          if label !='None':
+             kategories.append({'Kategorie': label, 'Precision': precisions[i], 'Recall':recall[i], 'F1-score':f1_score[i], 'Support':support[i]})  
           i+=1
    
         

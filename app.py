@@ -12,7 +12,6 @@ from sklearn.metrics import classification_report
 app = Flask(__name__)
 errors = Blueprint('errors', __name__)
 
-
 @app.route("/")
 @app.route("/index")
 @app.route('/form')
@@ -95,7 +94,6 @@ def upload_dataset_json():
           algorithm = algorithms[2]
       dataframe = json_normalize(json_data['datasets'])     
       
-
       ##  --- TODO remove after ------------------------------------------------------------
       # restore for calls
       #dataframe = data_ingestion("people-csv-light")
@@ -105,10 +103,11 @@ def upload_dataset_json():
   
       categories_labels = dataframe.kategorie.dropna().unique();
       labels = list(categories_labels)
-      labels.append('None')
+      if len(labels) <= 2:
+         labels.append('None')
     
       categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
-         
+    
       report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
       
       response_body = create_response_body_from_report(report, labels, algorithm, accuracy);
