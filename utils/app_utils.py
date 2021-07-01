@@ -1,10 +1,12 @@
 from json import JSONEncoder
 from sklearn.metrics import classification_report
 from cherrypy._cprequest import ResponseBody
-from utils.training_models_utils import *
 import numpy as np
 import pandas as pd
-
+from pandas import json_normalize
+from utils.data_utils import data_cleansing
+import joblib
+np.set_printoptions(suppress=True,precision=4)
 
 algorithms = ['linearSVC','randomForest','logisticRegression']
 
@@ -78,3 +80,65 @@ def create_response_body_from_report(report, labels, algorithm, accuracy):
               ]})
       
       return responseBody
+  
+def create_response_body_from_predictions(predictions,labels):
+      responses=[]
+      formatter = "{0:.4f}"
+      gruppen_id = "Capgemini Springboot Team"
+      id ="dummy-id-4711"   
+            
+      for row in predictions: 
+          kategories = []
+          print(labels)
+          print(row)
+          i=0
+          for label in labels:
+               kategories.append({'name': label, 'prozent': formatter.format(row[0][i])}) 
+               i+=1
+               
+          responses.append(  {
+               "id" : id,
+               "gruppen_id" : gruppen_id,  
+               "kategorien" : kategories
+            })  
+                   
+            #responses.append(subjectResponse)
+      responseBody = JSONEncoder().encode({
+          "Responses" : [responses]})
+      
+      return responseBody
+  
+def predict_for_dataset(classifier, json_data):
+          
+      dataframe = json_normalize(json_data['datasets'])     
+      
+      dataframe =  data_cleansing(dataframe)
+  
+      categories_labels = dataframe.kategorie.dropna().unique();
+      labels = list(categories_labels)
+      if len(labels) <= 2:
+         labels.append('None')
+      
+      filename = 'trained_models/count_vector.sav'
+      # load the model from disk
+      vectorizer = joblib.load(filename)
+
+      vectorizer._validate_vocabulary()
+
+      filename = 'trained_models/label_encoder.sav'
+
+      label_encoder = joblib.load(filename)
+
+      predictions = []
+      for subject in dataframe.betreffzeile: 
+          pred  = classifier.predict(vectorizer.transform([subject]))
+          categories_prob = classifier.predict_proba(vectorizer.transform([subject])) 
+          predictions.append(categories_prob)   
+  
+      print(predictions)
+ 
+      labels = label_encoder.inverse_transform(classifier.classes_)
+      
+      response_body =  create_response_body_from_predictions(predictions,labels);
+    
+      return response_body

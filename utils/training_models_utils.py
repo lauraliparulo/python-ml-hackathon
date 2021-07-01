@@ -2,6 +2,7 @@ from utils.data_utils import data_set_from_dir
 from utils.data_utils import report_classification
 from sklearn import model_selection
 from sklearn.svm import LinearSVC
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 import joblib
@@ -60,7 +61,10 @@ def score_with_LinearSVC(subjectsTest, categoriesTest):
 
 def saveLinearSVCModel (subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesY):
     print("\nTRAINING WITH Linear SVC  classifier...")
-    classifier = LinearSVC()
+    
+    svm = LinearSVC()
+    classifier = CalibratedClassifierCV(svm) 
+ 
     classifier.fit(subjectsXtrain,categoriesYtrain)
 
     # save the model to disk

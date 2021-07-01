@@ -14,6 +14,8 @@ from nltk.corpus import stopwords
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+import joblib
+from utils.unsorted_label_encoder import UnsortedLabelEncoder
 
 header_list = ["id", "versicherungsnummer", "vorname","nachname", "geburtsdatum", "ort",
                "strasse", "telefon", "iban","email", "emaildatum", "kategorie", "betreffzeile"]
@@ -109,17 +111,30 @@ def data_splitting_and_vectorizing(dataFrame):
     subjectsXtrain = vectorizer.fit_transform(subject_train)
     subjectsXtest = vectorizer.fit_transform(subject_test)
 
-    encoder = LabelEncoder()
-    categoriesYtrain = encoder.fit_transform(categories_train)
-    categoriesYtest = encoder.fit_transform(categories_test)
-    
+    print('vect.get_feature_names(): {0}'.format(vectorizer.get_feature_names()))
+   
+    filename = 'trained_models/count_vector.sav'
+    joblib.dump(vectorizer, filename)
+
+    encoder = UnsortedLabelEncoder()
+    encoder.fit(categories_train)
+    print('get labels: {0}'.format( encoder._get_param_names()))
+    categoriesYtrain = encoder.transform(categories_train)
+    categoriesYtest = encoder.transform(categories_test)
+  
+   
+    filename = 'trained_models/label_encoder.sav'
+    joblib.dump(encoder, filename)
+  
     return subjectsXtrain, subjectsXtest, categoriesYtrain, categoriesYtest
+
+   
 
 def data_vectorizing(dataFrame):
     print("\nVECTORIZING subjects and categories...")
     vectorizer = CountVectorizer(max_features=100, min_df=5, max_df=0.8, stop_words=stopwords.words('german'))
     subjectsTest = vectorizer.fit_transform(dataFrame.betreffzeile)
-
+    saveCountVectorizer(vectorizer)
     encoder = LabelEncoder()
     categoriesTest = encoder.fit_transform(dataFrame.kategorie)
     print("\nVECTORIZING completed")

@@ -1,13 +1,18 @@
 from flask import Flask
 from flask import render_template, request, make_response, jsonify, json, redirect, url_for, Blueprint
 from os import remove
-from pandas import json_normalize
 from werkzeug.utils import secure_filename
 import os
 from sklearn.metrics import accuracy_score
 from utils.app_utils import *
 from utils.data_utils import *
 from sklearn.metrics import classification_report
+from utils.training_models_utils import load_classifier_for_LogisticRegression
+from utils.training_models_utils import load_classifier_for_RandomForest
+from utils.training_models_utils import load_classifier_for_LinearSVC
+from utils.app_utils import predict_for_dataset
+np.set_printoptions(suppress=True,precision=4)
+#np.set_printoptions(suppress=True,precision=4)
 
 app = Flask(__name__)
 errors = Blueprint('errors', __name__)
@@ -50,7 +55,6 @@ def report():
 
     return render_template('report.html', report = report_df.to_html())
 
-
 # https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
 
 ######################################################  
@@ -81,38 +85,33 @@ def upload_file_from_request():
       
       return make_response(jsonify(response_body),200);
 
-#upload from file by curl
-@app.route('/upload_json', methods = ['POST'])
-def upload_dataset_json():
+@app.route('/predict/logistic_regression', methods = ['POST'])
+def score_with_logistic_regression():
     
-      json_data = request.get_json()
-      #print(json_data)
-      try:
-           algorithm = json_data["algorithm"]
-      except KeyError:
-          print("algorithm not found in JSON. Using logistic regression")
-          algorithm = algorithms[2]
-      dataframe = json_normalize(json_data['datasets'])     
+      classifier = load_classifier_for_LogisticRegression()
       
-      ##  --- TODO remove after ------------------------------------------------------------
-      # restore for calls
-      #dataframe = data_ingestion("people-csv-light")
-      # ------------------------------------------------------------------------------------
+      response_body = predict_for_dataset(classifier, request.get_json())
       
-      subjectsTest, categoriesTest =  data_set_test_preparation_from_dataframe_test(dataframe)
-  
-      categories_labels = dataframe.kategorie.dropna().unique();
-      labels = list(categories_labels)
-      if len(labels) <= 2:
-         labels.append('None')
-    
-      categoriesPredicted, matrix, report, accuracy = score_with_given_algorithm(subjectsTest, categoriesTest, algorithm)
-    
-      report = classification_report(categoriesTest, categoriesPredicted, target_names=list(labels))
-      
-      response_body = create_response_body_from_report(report, labels, algorithm, accuracy);
-       
       return make_response(response_body,200);  
+
+@app.route('/predict/linear_svc', methods = ['POST'])
+def score_with_linear_svc():
+    
+      classifier = load_classifier_for_LinearSVC()
+      
+      response_body = predict_for_dataset(classifier, request.get_json())
+      
+      return make_response(response_body,200);  
+  
+@app.route('/predict/random_forest', methods = ['POST'])
+def score_with_random_forest():
+    
+      classifier = load_classifier_for_RandomForest()
+      
+      response_body = predict_for_dataset(classifier, request.get_json())
+      
+      return make_response(response_body,200);  
+
 
 @errors.app_errorhandler(Exception)
 def handle_error(error):
@@ -130,7 +129,7 @@ def handle_error(error):
 
     return jsonify(response), status_code
 
-app.register_blueprint(errors)
+#app.register_blueprint(errors)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
