@@ -30,6 +30,7 @@ def uploader_file_from_form():
       fileName = secure_filename(f.filename)
       f.save(fileName)   
       algorithm = request.form['options']   
+      print(algorithm)
       return redirect(url_for('.scoring', algorithm=algorithm, fileName=fileName))
    if request.method == 'GET':  
       return render_template('upload-csv.html',algorithm="none")

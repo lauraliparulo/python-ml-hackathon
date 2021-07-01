@@ -9,6 +9,6 @@ from utils.training_models_utils import prepareData
 subjectsTrain, subjectsTest, categoriesTrain, categoriesTest = prepareData()
 #saveRandomForestClassifier(subjectsTrain, subjectsTest, categoriesTrain, categoriesTest)
 saveLinearSVCModel(subjectsTrain, subjectsTest, categoriesTrain, categoriesTest)
-saveLogisticRegressionModel(subjectsTrain, subjectsTest, categoriesTrain, categoriesTest)
+#saveLogisticRegressionModel(subjectsTrain, subjectsTest, categoriesTrain, categoriesTest)
 
 

@@ -6,6 +6,10 @@ import pandas as pd
 from pandas import json_normalize
 from utils.data_utils import data_cleansing
 import joblib
+from utils.training_models_utils import score_with_LinearSVC
+from utils.training_models_utils import score_with_RandomForest
+from utils.training_models_utils import score_with_LogisticRegression
+
 np.set_printoptions(suppress=True,precision=4)
 
 algorithms = ['linearSVC','randomForest','logisticRegression']

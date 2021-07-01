@@ -134,7 +134,6 @@ def data_vectorizing(dataFrame):
     print("\nVECTORIZING subjects and categories...")
     vectorizer = CountVectorizer(max_features=100, min_df=5, max_df=0.8, stop_words=stopwords.words('german'))
     subjectsTest = vectorizer.fit_transform(dataFrame.betreffzeile)
-    saveCountVectorizer(vectorizer)
     encoder = LabelEncoder()
     categoriesTest = encoder.fit_transform(dataFrame.kategorie)
     print("\nVECTORIZING completed")
