@@ -145,3 +145,8 @@ Python machine learning document classification example with email subjects by c
 ### Examples
 
      curl -i -X POST "Content-Type: multipart/mixed" -F file=@Datensatz27.csv -F "data={\"algorithm\":\"linearSVC \"};type=application/json" https://python-ml-hackhaton-apim.azure-api.net:8080/upload
+     
+     
+     
+### AZURE WEB APP
+          http://python-ml-hackathon.azurewebsites.net:5000/predict/linear_svc
