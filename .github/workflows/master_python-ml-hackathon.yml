@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'python-ml-hackathon'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_4ac7100422484dd2a087f716574f5159 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_78f9f72d585f405aa0fcfe4b4cfe600a }}
