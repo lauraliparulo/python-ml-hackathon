@@ -15,11 +15,12 @@ np.set_printoptions(suppress=True,precision=4)
 #np.set_printoptions(suppress=True,precision=4)
 
 app = Flask(__name__)
+
 errors = Blueprint('errors', __name__)
 
-@app.route("/")
-@app.route("/index")
-@app.route('/form')
+#@app.route("/")
+#@app.route("/index")
+#@app.route('/form')
 def upload_file():
    return render_template('upload-csv.html')
     
