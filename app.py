@@ -23,7 +23,7 @@ errors = Blueprint('errors', __name__)
 def upload_file():
    return render_template('upload-csv.html')
     
-@app.route('/form_upload', methods = ['GET', 'POST'])
+#@app.route('/form_upload', methods = ['GET', 'POST'])
 def uploader_file_from_form():
    if request.method == 'POST':
       f = request.files['file']
@@ -35,7 +35,7 @@ def uploader_file_from_form():
    if request.method == 'GET':  
       return render_template('upload-csv.html',algorithm="none")
   
-@app.route('/uploading')  
+#@app.route('/uploading')  
 def scoring():  
     algorithm = request.args['algorithm'] 
     fileName = request.args['fileName'] 
@@ -50,7 +50,7 @@ def scoring():
     report_df = classification_report_to_dataframe(report)
     return render_template('report.html', cat=categoriesPredicted, matrix=matrix, report = report_df.to_html(), acc=accuracy, alg = algorithm)
 
-@app.route("/report")
+#@app.route("/report")
 def report():
     report_df = classification_report_to_dataframe(report)
 
