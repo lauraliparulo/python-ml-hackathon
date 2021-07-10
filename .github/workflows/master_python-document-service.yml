@@ -72,4 +72,12 @@ jobs:
         with:
           app-name: 'python-document-service'
           slot-name: 'production'
+          run: |
+            az configure --defaults ${{ env.RESOURCE_GROUP }}
+            az webapp config appsettings --name ${{ env.WEBAPP_NAME }} --settings \
+            SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+            FLASK_ENV=production
+
+            az webapp config set --name ${{ env.WEBAPP_NAME }} \
+                 --startup-file "gunicorn --bind=0.0.0.0 --timeout 260000 app:app"
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_692ee23e129a420d981118bcab926ad0 }}
