@@ -15,13 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Python version
-      uses: actions/setup-python@v1
-      with:
-        python-version: '3.8'
-        
     - uses: kolpav/purge-artifacts-action@v1
       with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,7 +27,14 @@ jobs:
         # Optional inputs
         # skip-tags: true
         # skip-recent: 5
-          
+        
+    - uses: actions/checkout@v2
+
+    - name: Set up Python version
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+         
     - name: Create and start virtual environment
       run: |
         python -m venv venv
