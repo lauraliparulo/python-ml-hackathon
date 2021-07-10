@@ -87,7 +87,7 @@ def upload_file_from_request():
       
       return make_response(jsonify(response_body),200);
 
-@app.route('/predict/logistic_regression', methods = ['POST'])
+@app.route('/api/predict/logistic_regression', methods = ['POST'])
 def score_with_logistic_regression():
     
       classifier = load_classifier_for_LogisticRegression()
@@ -96,7 +96,7 @@ def score_with_logistic_regression():
       
       return make_response(response_body,200);  
 
-@app.route('/predict/linear_svc', methods = ['POST'])
+@app.route('/api/predict/linear_svc', methods = ['POST'])
 def score_with_linear_svc():
     
       classifier = load_classifier_for_LinearSVC()
@@ -105,7 +105,7 @@ def score_with_linear_svc():
       
       return make_response(response_body,200);  
   
-@app.route('/predict/random_forest', methods = ['POST'])
+@app.route('/api/predict/random_forest', methods = ['POST'])
 def score_with_random_forest():
     
       classifier = load_classifier_for_RandomForest()
@@ -134,4 +134,4 @@ def handle_error(error):
 #app.register_blueprint(errors)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
