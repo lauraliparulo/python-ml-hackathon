@@ -1,10 +1,13 @@
 # syntax=docker/dockerfile:1
-FROM python:3.8
+FROM python:3
 MAINTAINER Laura Liparulo <laura.liparulo@capgemini.com>
 ARG APP_NAME=python-ml-hackathon
 ENV APP_NAME=${APP_NAME}
-COPY requirements.txt .
+RUN mkdir /code
+WORKDIR /code
+COPY . /code
+ADD requirements.txt /code
 RUN pip install -r requirements.txt --no-cache-dir
-COPY . .
+CMD ["python app.py"]
 EXPOSE 5000
-CMD gunicorn -w 4 -b :5000  --timeout 120000  src.app:app
+ENTRYPOINT ["python3"]
