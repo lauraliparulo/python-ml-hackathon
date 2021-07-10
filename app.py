@@ -19,10 +19,6 @@ np.set_printoptions(suppress=True,precision=4)
 
 app = Flask(__name__)
 
-
-
-
-
 errors = Blueprint('errors', __name__)
 
 @app.route("/")
@@ -139,23 +135,6 @@ def handle_error(error):
     return jsonify(response), status_code
 
 app.register_blueprint(errors)
-
-# swagger ui ........................
-@app.route('/static/<path:path>')
-def send_static(path):
-    return send_from_directory('static',path)
-
-SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.json'
-
-
-swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL, config={
-        'app_name' : "python-document-service"
-    }
-)
-
-app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
-# ................................................
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)
