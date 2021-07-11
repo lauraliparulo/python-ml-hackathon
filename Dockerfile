@@ -5,7 +5,8 @@ ARG APP_NAME=python-document-service
 ENV APP_NAME=${APP_NAME}
 RUN mkdir /code
 WORKDIR /code
-COPY . /code
+ADD requirements.txt /code
 RUN pip install -r requirements.txt --no-cache-dir
+ADD . /code
 EXPOSE 8000
-ENTRYPOINT ["/code/gunicorn-startup.sh"]
+ENTRYPOINT ["sh", "code/gunicorn-startup.sh"]
