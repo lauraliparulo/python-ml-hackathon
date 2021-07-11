@@ -12,7 +12,6 @@ from utils.training_models_utils import load_classifier_for_LogisticRegression
 from utils.training_models_utils import load_classifier_for_RandomForest
 from utils.training_models_utils import load_classifier_for_LinearSVC
 from utils.app_utils import predict_for_dataset
-from flask_swagger_ui import get_swaggerui_blueprint
 
 np.set_printoptions(suppress=True,precision=4)
 #np.set_printoptions(suppress=True,precision=4)
