@@ -8,4 +8,4 @@ WORKDIR /code
 COPY . /code
 RUN pip install -r requirements.txt --no-cache-dir
 EXPOSE 8000
-ENTRYPOINT ["sudo ./gunicorn-startup.sh"]
+ENTRYPOINT ["/code/gunicorn-startup.sh"]
