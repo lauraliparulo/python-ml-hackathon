@@ -6,6 +6,7 @@ ENV APP_NAME=${APP_NAME}
 # set web server root as working dir
 WORKDIR /home/site/wwwroot
 COPY requirements.txt .
+RUN pip install gunicorn
 RUN pip install -r requirements.txt --no-cache-dir
 COPY . .
 EXPOSE 8000
