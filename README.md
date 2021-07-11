@@ -22,11 +22,11 @@ Python machine learning document classification example with email subjects by c
 
 - POST Request - JSON UPLOAD  (as specified in the Documentaiton)
 
-		{base_url}/predict/random_forest
+		{base_url}/api/predict/random_forest
 
-       {base_url}/predict/logistic_regression
+       {base_url}/api/predict/logistic_regression
 
-       {base_url}/predict/linear_svc
+       {base_url}/api/predict/linear_svc
 
 ### Request Json example
 
@@ -45,13 +45,13 @@ Python machine learning document classification example with email subjects by c
             "email": "Hbel_Nelli@hotmail.de",
             "emaildatum": "1 Mar 2019 13:32:53 GMT",
             "kategorie": "Tarifwechsel",
-            "betreffzeile": "Tarifnderung bei der Wohnungsversicherung BF-5161-2363187462 aufgrund von unvorhergesehenen baulichen Änderungen"
+            "betreffzeile": "Tarifnderung bei der Wohnungsversicherung BF-5161-2363187462 aufgrund von unvorhergesehenen baulichen Ã„nderungen"
         },
         {
             "id": "22500076",
             "versicherungsnummer": "BF-5161-2363187462",
             "vorname": "Nelli",
-            "nachname": "Höbel",
+            "nachname": "HÃ¶bel",
             "geburtsdatum": "1915-11-24",
             "ort": "44588 Sckingen",
             "strasse": "Jacobi Jckelplatz 18",
@@ -75,11 +75,11 @@ Python machine learning document classification example with email subjects by c
                 "gruppen_id": "Capgemini Springboot Team",
                 "kategorien": [
                     {
-                        "name": "Vertragsänderung",
+                        "name": "VertragsÃ¤nderung",
                         "prozent": 0.0
                     },
                     {
-                        "name": "Kündigung",
+                        "name": "KÃ¼ndigung",
                         "prozent": 0.0
                     },
                     {
@@ -87,7 +87,7 @@ Python machine learning document classification example with email subjects by c
                         "prozent": 0.0
                     },
                     {
-                        "name": "Adressänderungen",
+                        "name": "AdressÃ¤nderungen",
                         "prozent": 0.0
                     },
                     {
@@ -95,11 +95,11 @@ Python machine learning document classification example with email subjects by c
                         "prozent": 1.0
                     },
                     {
-                        "name": "Bankverbindungsänderungen",
+                        "name": "BankverbindungsÃ¤nderungen",
                         "prozent": 0.0
                     },
                     {
-                        "name": "Namensänderung",
+                        "name": "NamensÃ¤nderung",
                         "prozent": 0.0
                     }
                 ]
@@ -109,11 +109,11 @@ Python machine learning document classification example with email subjects by c
                 "gruppen_id": "Capgemini Springboot Team",
                 "kategorien": [
                     {
-                        "name": "Vertragsänderung",
+                        "name": "VertragsÃ¤nderung",
                         "prozent": 0.2
                     },
                     {
-                        "name": "Kündigung",
+                        "name": "KÃ¼ndigung",
                         "prozent": 0.0
                     },
                     {
@@ -121,7 +121,7 @@ Python machine learning document classification example with email subjects by c
                         "prozent": 0.7795043224326631
                     },
                     {
-                        "name": "Adressänderungen",
+                        "name": "AdressÃ¤nderungen",
                         "prozent": 0.0
                     },
                     {
@@ -129,11 +129,11 @@ Python machine learning document classification example with email subjects by c
                         "prozent": 0.0
                     },
                     {
-                        "name": "Bankverbindungsänderungen",
+                        "name": "BankverbindungsÃ¤nderungen",
                         "prozent": 0.0
                     },
                     {
-                        "name": "Namensänderung",
+                        "name": "NamensÃ¤nderung",
                         "prozent": 0.020495677567336855
                     }
                 ]
