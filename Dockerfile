@@ -9,4 +9,5 @@ ADD requirements.txt /code
 RUN pip install -r requirements.txt --no-cache-dir
 ADD . /code
 EXPOSE 8000
-ENTRYPOINT ["sh", "code/gunicorn-startup.sh"]
+RUN
+ENTRYPOINT ["sh", "/code/gunicorn-startup.sh"]
