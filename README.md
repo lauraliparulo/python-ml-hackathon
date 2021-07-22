@@ -1,4 +1,4 @@
-# Capgemini Machine learning Hackathon - Python document serv-ce 
+# Capgemini Machine learning Hackathon - Python document service 
 
 ## Introduction 
 Python machine learning document classification example with email subjects by category  
@@ -148,5 +148,9 @@ Python machine learning document classification example with email subjects by c
      
      
      
-### AZURE WEB APP
-          http://python-ml-hackathon.azurewebsites.net:5000/predict/linear_svc
+### AZURE WEB APP - app service
+          http://python-document-service.azurewebsites.net:80/predict/linear_svc
+
+
+## Docker image
+docker container run -d -p 8000:8000 capgemini/python-document-service

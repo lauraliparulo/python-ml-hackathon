@@ -1,6 +1,4 @@
 from json import JSONEncoder
-from sklearn.metrics import classification_report
-from cherrypy._cprequest import ResponseBody
 import numpy as np
 import pandas as pd
 from pandas import json_normalize
@@ -108,7 +106,7 @@ def create_response_body_from_predictions(predictions,labels):
                    
             #responses.append(subjectResponse)
       responseBody = JSONEncoder().encode({
-          "Responses" : [responses]})
+          "Responses" : responses})
       
       return responseBody
   
