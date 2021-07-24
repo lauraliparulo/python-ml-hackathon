@@ -20,11 +20,11 @@ app.config['SECRET_KEY'] = 'CGH2021Sep_X8439578jfdk'
 errors = Blueprint('errors', __name__)
 
 
-@app.before_request
-def auth_user():
-    secret = request.headers.get('secret')
-    if secret != app.config.get('SECRET_KEY'):
-        flask.abort(401)
+# @app.before_request
+# def auth_user():
+#    secret = request.headers.get('secret')
+#    if secret != app.config.get('SECRET_KEY'):
+#        flask.abort(401)
 
 
 @app.route("/")
@@ -103,30 +103,31 @@ def upload_file_from_request():
 
 @app.route('/api/predict/logistic_regression', methods=['POST'])
 def score_with_logistic_regression():
+    check_secret_auth()
     classifier = load_classifier_for_LogisticRegression()
-
     response_body = predict_for_dataset(classifier, request.get_json())
-
     return make_response(response_body, 200);
-
 
 @app.route('/api/predict/linear_svc', methods=['POST'])
 def score_with_linear_svc():
+    check_secret_auth()
     classifier = load_classifier_for_LinearSVC()
-
     response_body = predict_for_dataset(classifier, request.get_json())
-
     return make_response(response_body, 200);
 
 
 @app.route('/api/predict/random_forest', methods=['POST'])
 def score_with_random_forest():
+    check_secret_auth()
     classifier = load_classifier_for_RandomForest()
-
     response_body = predict_for_dataset(classifier, request.get_json())
-
     return make_response(response_body, 200);
 
+
+def check_secret_auth():
+    secret = request.args.get('secret', default='', type=str)
+    if secret != app.config.get('SECRET_KEY'):
+        flask.abort(401)
 
 @errors.app_errorhandler(Exception)
 def handle_error(error):
