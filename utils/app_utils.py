@@ -72,7 +72,7 @@ def create_response_body_from_report(report, labels, algorithm, accuracy):
    
         
       responseBody = JSONEncoder().encode({
-          "Responses" : [
+          "responses" : [
               { "gruppen_id" : gruppen_id,  
                 "id" : id,
                 "algorithm": algorithm,
@@ -83,30 +83,31 @@ def create_response_body_from_report(report, labels, algorithm, accuracy):
       
       return responseBody
   
-def create_response_body_from_predictions(predictions,labels):
+def create_response_body_from_predictions(predictions,ids,labels):
+
       responses=[]
       formatter = "{0:.4f}"
       gruppen_id = "Capgemini Springboot Team"
-      id ="dummy-id-4711"   
             
       for row in predictions: 
           kategories = []
           print(labels)
           print(row)
           i=0
+          j=0
           for label in labels:
                kategories.append({'name': label, 'prozent': formatter.format(row[0][i])}) 
                i+=1
                
           responses.append(  {
-               "id" : id,
-               "gruppen_id" : gruppen_id,  
+               "id" : ids[j],
+               "gruppenid" : gruppen_id,
                "kategorien" : kategories
             })  
-                   
-            #responses.append(subjectResponse)
+          j+=1
+
       responseBody = JSONEncoder().encode({
-          "Responses" : responses})
+          "responses" : responses})
       
       return responseBody
   
@@ -132,15 +133,14 @@ def predict_for_dataset(classifier, json_data):
       label_encoder = joblib.load(filename)
 
       predictions = []
-      for subject in dataframe.betreffzeile: 
-          pred  = classifier.predict(vectorizer.transform([subject]))
-          categories_prob = classifier.predict_proba(vectorizer.transform([subject])) 
-          predictions.append(categories_prob)   
-  
+      for subject in dataframe.betreffzeile:
+          categories_prob = classifier.predict_proba(vectorizer.transform([subject]))
+          predictions.append(categories_prob)
+
       print(predictions)
  
       labels = label_encoder.inverse_transform(classifier.classes_)
       
-      response_body =  create_response_body_from_predictions(predictions,labels);
+      response_body =  create_response_body_from_predictions(predictions, dataframe.id, labels);
     
       return response_body
