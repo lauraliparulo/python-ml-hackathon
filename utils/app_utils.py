@@ -88,13 +88,12 @@ def create_response_body_from_predictions(predictions,ids,labels):
       responses=[]
       formatter = "{0:.4f}"
       gruppen_id = "Capgemini Springboot Team"
-            
+
+      j=0
       for row in predictions: 
           kategories = []
-          print(labels)
-          print(row)
           i=0
-          j=0
+
           for label in labels:
                kategories.append({'name': label, 'prozent': formatter.format(row[0][i])}) 
                i+=1
@@ -137,10 +136,9 @@ def predict_for_dataset(classifier, json_data):
           categories_prob = classifier.predict_proba(vectorizer.transform([subject]))
           predictions.append(categories_prob)
 
-      print(predictions)
+      #print(predictions)
  
       labels = label_encoder.inverse_transform(classifier.classes_)
-      
-      response_body =  create_response_body_from_predictions(predictions, dataframe.id, labels);
+      response_body =  create_response_body_from_predictions(predictions, dataframe['id'].tolist(), labels);
     
       return response_body

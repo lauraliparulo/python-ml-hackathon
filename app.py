@@ -70,9 +70,6 @@ def report():
 
     return render_template('report.html', report=report_df.to_html())
 
-
-# https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
-
 ######################################################  
 # JSON RESPONSES
 
@@ -84,7 +81,7 @@ def upload_file_from_request():
     f.save(fileName)
 
     json_data = request.form.get('data')
-    print(json_data)
+    #print(json_data)
 
     d = json.loads(json_data)
 
@@ -100,7 +97,6 @@ def upload_file_from_request():
 
     return make_response(jsonify(response_body), 200);
 
-
 @app.route('/api/predict/logistic_regression', methods=['POST'])
 def score_with_logistic_regression():
     check_secret_auth()
@@ -115,14 +111,12 @@ def score_with_linear_svc():
     response_body = predict_for_dataset(classifier, request.get_json())
     return make_response(response_body, 200);
 
-
 @app.route('/api/predict/random_forest', methods=['POST'])
 def score_with_random_forest():
     check_secret_auth()
     classifier = load_classifier_for_RandomForest()
     response_body = predict_for_dataset(classifier, request.get_json())
     return make_response(response_body, 200);
-
 
 def check_secret_auth():
     secret = request.args.get('secret', default='', type=str)

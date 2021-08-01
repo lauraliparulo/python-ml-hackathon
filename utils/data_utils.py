@@ -39,16 +39,16 @@ def data_set_test_preparation_from_dataframe_test(dataframe):
 
 def json_string_to_data_set(json_string):
     json_object = json.loads(json_string)
-    print(json_object) 
+  #  print(json_object)
     dataframe = json_normalize(json_object['datasets'])   
-    print(dataframe)
+  #  print(dataframe)
     return dataframe 
 
 def json_string_to_data_set(json_string):
     json_object = json.loads(json_string)
-    print(json_object) 
+ #   print(json_object)
     dataframe = json_normalize(json_object['datasets'])   
-    print(dataframe)
+  #  print(dataframe)
     return dataframe 
 
 def data_set_test_preparation_upload(data_set_dir_path):
@@ -90,8 +90,6 @@ def data_cleansing(dataFrame):
     dataFrame = dataFrame[dataFrame['betreffzeile']!=""]
 
     print("Time to remove nulls", timer() - starttime)
-    labels = list(dataFrame.kategorie.unique())
-    print("Categories found: ",labels)
     print ("\nDATA CLEANSING completed")
     return dataFrame
 
@@ -111,14 +109,14 @@ def data_splitting_and_vectorizing(dataFrame):
     subjectsXtrain = vectorizer.fit_transform(subject_train)
     subjectsXtest = vectorizer.fit_transform(subject_test)
 
-    print('vect.get_feature_names(): {0}'.format(vectorizer.get_feature_names()))
+   # print('vect.get_feature_names(): {0}'.format(vectorizer.get_feature_names()))
    
     filename = 'trained_models/count_vector.sav'
     joblib.dump(vectorizer, filename)
 
     encoder = UnsortedLabelEncoder()
     encoder.fit(categories_train)
-    print('get labels: {0}'.format( encoder._get_param_names()))
+  #  print('get labels: {0}'.format( encoder._get_param_names()))
     categoriesYtrain = encoder.transform(categories_train)
     categoriesYtest = encoder.transform(categories_test)
   
@@ -144,7 +142,7 @@ def data_preparation_eval(dataframe):
     print('Eval prep')
     dataframe.drop(dataframe.loc[:, 'versicherungsnummer':'emaildatum'].columns, axis = 1)
     dataframe = data_cleansing(dataframe)
-    print("HEAD: ",dataframe.head())
+  #  print("HEAD: ",dataframe.head())
     subjectsTest, categoriesTest, labels = data_vectorizing(dataframe)
     return subjectsTest, categoriesTest
 
